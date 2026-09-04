@@ -8,7 +8,7 @@ import (
 )
 
 func main() {
-	for{
+	for {
 		fmt.Printf("$ ")
 		command, err := input.GetInput()
 		if err != nil {
@@ -17,6 +17,10 @@ func main() {
 		}
 		if !input.IsCommand(command) {
 			fmt.Fprintf(os.Stderr, "%s: command not found\n", command)
+			continue
+		}
+		if command == "exit" {
+			break
 		}
 	}
 }

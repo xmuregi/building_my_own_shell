@@ -6,13 +6,15 @@ import (
 	"strings"
 )
 
-var commandList map[string]bool = make(map[string]bool)
+var commandList map[string]bool = map[string]bool{
+	"exit": true,
+}
 
 // Get User Input from Standard Input
 func GetInput() (string, error) {
 	reader := bufio.NewReader(os.Stdin)
 	command, err := reader.ReadString('\n')
-	
+
 	if err != nil {
 		return "", err
 	}
