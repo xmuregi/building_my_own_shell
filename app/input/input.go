@@ -10,7 +10,9 @@ var commandList map[string]bool = make(map[string]bool)
 
 // Get User Input from Standard Input
 func GetInput() (string, error) {
-	command, err := bufio.NewReader(os.Stdin).ReadString('\n')
+	reader := bufio.NewReader(os.Stdin)
+	command, err := reader.ReadString('\n')
+	
 	if err != nil {
 		return "", err
 	}
