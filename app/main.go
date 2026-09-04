@@ -4,23 +4,38 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/xmuregi/building_my_own_shell/app/commands"
 	"github.com/xmuregi/building_my_own_shell/app/input"
 )
 
 func main() {
+
+REPL:
 	for {
 		fmt.Printf("$ ")
-		command, err := input.GetInput()
+		prompt, err := input.GetPrompt()
+
 		if err != nil {
-			fmt.Fprintf(os.Stderr, "error: failed to read command: %v\n", err)
+			fmt.Fprintf(os.Stderr, "error: failed to read prompt: %v\n", err)
 			return
 		}
-		if !input.IsCommand(command) {
-			fmt.Fprintf(os.Stderr, "%s: command not found\n", command)
+		IsCommandVal, err := commands.IsCommand(prompt.Command)
+		if err != nil {
+			fmt.Fprintf(os.Stderr, "error: failed to read prompt: %v\n", err)
+			return
+		}
+		if !IsCommandVal {
+			fmt.Fprintf(os.Stderr, "%s: command not found\n", prompt.Command)
 			continue
 		}
-		if command == "exit" {
-			break
+
+		switch prompt.Command {
+		case "exit":
+			fmt.Println("Exiting shell!")
+			break REPL
+		case "echo":
+			commands.Echo(prompt.Arg)
 		}
 	}
+
 }
