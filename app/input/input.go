@@ -1,0 +1,22 @@
+package input
+
+import (
+	"bufio"
+	"os"
+	"strings"
+)
+
+var commandList map[string]bool = make(map[string]bool)
+
+// Get User Input from Standard Input
+func GetInput() (string, error) {
+	command, err := bufio.NewReader(os.Stdin).ReadString('\n')
+	if err != nil {
+		return "", err
+	}
+	return strings.TrimSpace(command), err
+}
+
+func IsCommand(command string) bool {
+	return commandList[command]
+}
