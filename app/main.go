@@ -8,13 +8,15 @@ import (
 )
 
 func main() {
-	fmt.Printf("$ ")
-	command, err := input.GetInput()
-	if err != nil {
-		fmt.Fprintf(os.Stderr, "error: failed to read command: %v\n", err)
-		return
-	}
-	if !input.IsCommand(command) {
-		fmt.Fprintf(os.Stderr, "%s: command not found\n", command)
+	for{
+		fmt.Printf("$ ")
+		command, err := input.GetInput()
+		if err != nil {
+			fmt.Fprintf(os.Stderr, "error: failed to read command: %v\n", err)
+			return
+		}
+		if !input.IsCommand(command) {
+			fmt.Fprintf(os.Stderr, "%s: command not found\n", command)
+		}
 	}
 }
