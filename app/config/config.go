@@ -3,6 +3,7 @@ package config
 import (
 	"fmt"
 	"os"
+	"slices"
 	"strings"
 
 	"github.com/joho/godotenv"
@@ -28,7 +29,6 @@ func NewBinPath() (*BinPath, error) {
 
 	fmt.Println(pathList)
 
-
 	newBinPath := BinPath{
 		Paths:   pathList,
 		Entries: make(map[string][]string),
@@ -45,4 +45,15 @@ func NewBinPath() (*BinPath, error) {
 	}
 	return &newBinPath, nil
 
+}
+
+// Returns the path to an executable in specified paths
+func (b *BinPath) GetPath(cmd string) (string, error) {
+	for _, path := range b.Paths {
+		entries := b.Entries[path]
+		if slices.Contains(entries, cmd) {
+			return fmt.Sprintf("%s/%s", path, cmd), nil
+		}
+	}
+	return "", fmt.Errorf("%s: not found", cmd)
 }
