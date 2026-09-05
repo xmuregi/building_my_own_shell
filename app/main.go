@@ -18,8 +18,8 @@ func main() {
 	}
 
 	binPath, err := config.NewBinPath()
-	if err != nil{
-		log.Fatalf("Error loading binary paths", err)
+	if err != nil {
+		log.Fatalf("Error loading binary paths: %v\n", err)
 	}
 
 REPL:
@@ -31,19 +31,11 @@ REPL:
 			fmt.Fprintf(os.Stderr, "error: failed to read prompt: %v\n", err)
 			return
 		}
-		if !commands.IsCommand(prompt.Command) {
-			fmt.Fprintf(os.Stderr, "%s: command not found\n", prompt.Command)
-			continue
-		}
-
 		switch prompt.Command {
 		case "exit":
-			fmt.Println("Exiting shell!")
+			fmt.Fprintf(os.Stdout, "Exiting shell!\n")
 			break REPL
-		case "echo":
-			commands.Echo(prompt.Arg)
-		case "type":
-			commands.Type(prompt.Arg, binPath)
 		}
+		commands.RunCommand(prompt, binPath)
 	}
 }
