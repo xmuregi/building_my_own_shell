@@ -15,9 +15,8 @@ func Type(arg string, binPaths *config.BinPath) {
 
 	for _, cmd := range argList {
 		found := false
-
 		// Incase its a shell builtin
-		if IsCommand(cmd) {
+		if IsBuiltin(cmd) {
 			fmt.Fprintf(os.Stdout, "%s is a shell builtin\n", cmd)
 			found = true
 			continue
