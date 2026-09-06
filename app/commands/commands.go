@@ -14,6 +14,7 @@ var builtinList map[string]bool = map[string]bool{
 	"exit": true,
 	"echo": true,
 	"type": true,
+	"pwd":  true,
 }
 
 // Returns bool value for Shell builtins
@@ -21,30 +22,65 @@ func IsBuiltin(command string) bool {
 	return builtinList[command]
 }
 
-// Run external commands
-func RunCommand(prompt *input.Prompt, binPaths *config.BinPath) {
-	if IsBuiltin(prompt.Command) {
-		switch prompt.Command {
-		case "echo":
-			Echo(prompt.Arg)
-			return
-		case "type":
-			Type(prompt.Arg, binPaths)
+// Runs a built-in command using the provided output files.
+func runBuiltin(command *input.Prompt, stdout, stderr *os.File) {
+	switch command.Command {
+	case "echo":
+		result, err := Echo(command.Arg)
+		if err != nil {
+			fmt.Fprintln(stderr, err)
 			return
 		}
+		fmt.Fprintln(stdout, result)
+		return
+	case "type":
+		for _, name := range strings.Split(command.Arg, " ") {
+			result, err := Type(name)
+			if err != nil {
+				fmt.Fprintln(stderr, err)
+				continue
+			}
+			fmt.Fprintln(stdout, result)
+		}
+		return
+	case "pwd":
+		result, err := Pwd()
+		if err != nil {
+			fmt.Fprintln(stderr, err)
+			return
+		}
+		fmt.Fprintln(stdout, result)
+		return
+
 	}
-	path, err := binPaths.GetPath(prompt.Command)
+}
+
+// Runs an external command using the provided output files.
+func runExternal(command *input.Prompt, stdout, stderr *os.File, path string) {
+	argList := strings.Split(command.Arg, " ")
+
+	cmd := exec.Command(path, argList...)
+	cmd.Stdout = stdout
+	cmd.Stderr = stderr
+
+	err := cmd.Run()
+	if err != nil {
+		fmt.Fprintln(stderr, err)
+	}
+}
+
+// Runs built-in or external commands.
+func RunCommand(prompt *input.Prompt) {
+	if IsBuiltin(prompt.Command) {
+		runBuiltin(prompt, os.Stdout, os.Stderr)
+		return
+	}
+	path, err := exec.LookPath(prompt.Command)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "%s: not found\n", prompt.Command)
 		return
 	}
 	if path != "" {
-		argList := strings.Split(prompt.Arg, " ")
-
-		cmd := exec.Command(prompt.Command, argList...)
-		cmd.Stdout = os.Stdout
-		cmd.Stderr = os.Stderr
-
-		_ = cmd.Run()
+		runExternal(prompt, os.Stdout, os.Stderr, path)
 	}
 }

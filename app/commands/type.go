@@ -5,19 +5,11 @@ import (
 	"os/exec"
 )
 
-// Takes in commands and prints what type they are
-func Type(arg string, binPaths *config.BinPath) {
-
-	argList := strings.Split(arg, " ")
-
-	for _, cmd := range argList {
-		found := false
-		// Incase its a shell builtin
-		if IsBuiltin(cmd) {
-			fmt.Fprintf(os.Stdout, "%s is a shell builtin\n", cmd)
-			found = true
-			continue
-		}
+// Returns the type of a single command.
+func Type(cmd string) (string, error) {
+	if IsBuiltin(cmd) {
+		return fmt.Sprintf("%s is a shell builtin", cmd), nil
+	}
 
 	path, err := exec.LookPath(cmd)
 	if err != nil {
