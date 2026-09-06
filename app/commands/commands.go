@@ -6,7 +6,6 @@ import (
 	"os/exec"
 	"strings"
 
-	"github.com/xmuregi/building_my_own_shell/app/config"
 	"github.com/xmuregi/building_my_own_shell/app/input"
 )
 

@@ -7,7 +7,6 @@ import (
 
 	"github.com/joho/godotenv"
 	"github.com/xmuregi/building_my_own_shell/app/commands"
-	"github.com/xmuregi/building_my_own_shell/app/config"
 	"github.com/xmuregi/building_my_own_shell/app/input"
 )
 
@@ -15,11 +14,6 @@ func main() {
 	err := godotenv.Load()
 	if err != nil {
 		log.Fatal("Error loading .env file")
-	}
-
-	binPath, err := config.NewBinPath()
-	if err != nil {
-		log.Fatalf("Error loading binary paths: %v\n", err)
 	}
 
 REPL:
@@ -36,6 +30,6 @@ REPL:
 			fmt.Fprintf(os.Stdout, "Exiting shell!\n")
 			break REPL
 		}
-		commands.RunCommand(prompt, binPath)
+		commands.RunCommand(prompt)
 	}
 }

@@ -2,10 +2,7 @@ package commands
 
 import (
 	"fmt"
-	"os"
-	"strings"
-
-	"github.com/xmuregi/building_my_own_shell/app/config"
+	"os/exec"
 )
 
 // Takes in commands and prints what type they are
@@ -22,23 +19,9 @@ func Type(arg string, binPaths *config.BinPath) {
 			continue
 		}
 
-		// Incase its an external executable
-		path, err := binPaths.GetPath(cmd)
-		if err != nil {
-			fmt.Fprintf(os.Stderr, "%s: not found\n", cmd)
-			continue
-		}
-
-		if path != ""{
-			fmt.Fprintf(os.Stdout, "%s is %s\n", cmd, path)
-			found = true
-			continue
-		}
-
-		// Incase its never found
-		if !found {
-			fmt.Fprintf(os.Stderr, "%s: not found\n", cmd)
-		}
+	path, err := exec.LookPath(cmd)
+	if err != nil {
+		return "", err
 	}
-
+	return fmt.Sprintf("%s is %s", cmd, path), nil
 }
