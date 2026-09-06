@@ -15,6 +15,7 @@ var builtinList map[string]bool = map[string]bool{
 	"echo": true,
 	"type": true,
 	"pwd":  true,
+	"cd":   true,
 }
 
 // Returns bool value for Shell builtins
@@ -51,8 +52,13 @@ func runBuiltin(command *input.Prompt, stdout, stderr *os.File) {
 		}
 		fmt.Fprintln(stdout, result)
 		return
-
+	case "cd":
+		err := Cd(command.Arg)
+		if err != nil {
+			fmt.Fprintln(stderr, err)
+		}
 	}
+
 }
 
 // Runs an external command using the provided output files.
